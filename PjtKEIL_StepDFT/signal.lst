@@ -5,7 +5,7 @@ ARM Macro Assembler    Page 1
 
 
     1 00000000                 AREA             Signal, DATA, READONLY
-    2 00000000                 export           LeSignal
+    2 00000000         ;export LeSignal
     3 00000000         LeSignal
     4 00000000 FF 0F           DCW              0x0fff      ;  0 4095  0.99976
     5 00000002 F6 0F           DCW              0x0ff6      ;  1 4086  0.99756
@@ -97,8 +97,8 @@ Symbol: LeSignal
    Definitions
       At line 3 in file Src\Signal.asm
    Uses
-      At line 2 in file Src\Signal.asm
-Comment: LeSignal used once
+      None
+Comment: LeSignal unused
 Signal 00000000
 
 Symbol: Signal

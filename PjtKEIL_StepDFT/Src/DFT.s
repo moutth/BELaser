@@ -24,6 +24,8 @@
 
 DFT_ModuleAuCarre proc
 	push {r4-r11}
+	
+	;calcul dft reelle carre
 	mov r2, #0					;creation d'un index "n"
 	ldr r5, =TabCos				;stockage de l'adresse de TabCos dans r5
 	mov r7, #0					;initialisation de DFT
@@ -31,13 +33,38 @@ ForLoop
 	ldrsh r3, [r0, r2, lsl#1]	;stockage de x[n] dans r3
 	mul r4, r1, r2				;calcul de p = k*n
 	AND r4, #63					;p modulo 64 afin de ne pas deborder du TabCos
-	ldrsh r6, [r5, r4, lsl#1]	;stockage de cos(2pi/64 * n) dans r6
+	ldrsh r6, [r5, r4, lsl#1]	;stockage de cos(2pi/64 * p) dans r6
 	mul r8, r3, r6				;calcul de x[n]*TabCos[p]
 	add r7, r8					;ajout au total de la DFT
 	add r2, #1					;incrementation de l'index
 	cmp r2, #63					;comparaison du for
 	bne ForLoop
-	mov r7, r0					;stockage du resultat pour un retour conforme
+	asr r7, #11
+	mul r7, r7					;mise au carré
+	mov r7, r9					;stockage du resultat pour un retour conforme
+	
+	
+	;calcul dft imaginaire carre
+	mov r2, #0					;réinitialisation index "n"
+	ldr r5, =TabSin				;stockage de l'adresse de TabSin dans r5
+	mov r7, #0					;initialisation de DFT
+ForLoopIm
+	ldrsh r3, [r0, r2, lsl#1]	;stockage de x[n] dans r3
+	mul r4, r1, r2				;calcul de p = k*n
+	AND r4, #63					;p modulo 64 afin de ne pas deborder du TabSin
+	ldrsh r6, [r5, r4, lsl#1]	;stockage de sin(2pi/64 * p) dans r6
+	mul r8, r3, r6				;calcul de x[n]*TabSin[p]
+	add r7, r8					;ajout au total de la DFT
+	add r2, #1					;incrementation de l'index
+	cmp r2, #63					;comparaison du for
+	bne ForLoopIm
+	asr r7, #11
+	mul r7, r7					;mise au carré
+	
+	;calcul dft finale
+	add r7, r9					;somme des deux dft carrees
+	mov r0, r7 					;stockage du resultat pour un retour conforme en format 10.22
+	
 	pop {r4-r11}
 	bx lr
 	endp
@@ -46,10 +73,11 @@ ForLoop
 		;r2 : n
 		;r3 : x[n]
 		;r4 : p=k*n
-		;r5 : *TabCos[0]
-		;r6 : TabCos[p]
-		;r7 : partie reelle DFT
+		;r5 : &TabCos[0] puis &TabSin[0]
+		;r6 : TabCos[p] puis TabSin[p]
+		;r7 : somme DFT reelle puis imaginaire puis finale
 		;r8 : x[n]*TabCos[p]
+		;r9 : dft reeel carre
 
 
 ;Section ROM code (read only) :		
