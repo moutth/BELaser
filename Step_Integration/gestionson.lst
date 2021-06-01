@@ -1,0 +1,184 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000                 PRESERVE8
+    2 00000000                 THUMB
+    3 00000000         
+    4 00000000                 EXPORT           CallbackSon
+    5 00000000         ; ====================== zone de réservation de données,
+                         ======================================
+    6 00000000         ;Section RAM (read only) :
+    7 00000000                 area             mesdata,data,readonly
+    8 00000000         
+    9 00000000         
+   10 00000000         ;Section RAM (read write):
+   11 00000000                 area             maram,data,readwrite
+   12 00000000         
+   13 00000000 00 00   SortieSon
+                               DCW              0
+   14 00000002 00 00   Index   DCW              0
+   15 00000004                 export           SortieSon
+   16 00000004                 export           Index
+   17 00000004                 import           Son
+   18 00000004                 import           LongueurSon
+   19 00000004         ; ======================================================
+                       =========================================
+   20 00000004         
+   21 00000004         
+   22 00000004         
+   23 00000004         
+   24 00000004         ;Section ROM code (read only) :  
+   25 00000004                 area             moncode,code,readonly
+   26 00000000         ; écrire le code ici  
+   27 00000000         
+   28 00000000         CallbackSon
+                               proc
+   29 00000000 E92D 0FF0       push             {r4-r11}
+   30 00000004 490B            ldr              r1, =Son    ;stockage adresse t
+                                                            ableau des valeurs
+   31 00000006 4A0C            ldr              r2, =Index
+   32 00000008 6815            ldr              r5, [r2]
+   33 0000000A 480C            ldr              r0, =LongueurSon
+   34 0000000C 6800            ldr              r0, [r0]
+   35 0000000E 4285            cmp              r5, r0
+   36 00000010 D00C            beq              sortie
+   37 00000012 F931 3015       ldrsh            r3, [r1, r5, lsl#1]
+   38 00000016 F503 4300       add              r3, #32768
+   39 0000001A F04F 005B       mov              r0, #91
+   40 0000001E FBB3 F3F0       udiv             r3, r0
+   41 00000022 4807            ldr              r0, =SortieSon
+   42 00000024 8003            strh             r3, [r0]
+   43 00000026 F105 0501       add              r5, #1
+   44 0000002A 6015            str              r5, [r2]
+   45 0000002C         sortie
+   46 0000002C E8BD 0FF0       pop              {r4-r11}    ;remise en etat des
+                                                             registres
+   47 00000030 4770            bx               lr
+   48 00000032                 endp
+   49 00000032         
+   50 00000032         
+   51 00000032         
+   52 00000032                 END
+              00 00 00000000 
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+              00000000 
+              00000000 
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
+ork --depend=.\obj\gestionson.d -o.\obj\gestionson.o -I.\RTE\_CibleSondeST -IC:
+\Programdata\Keil\Arm\Packs\ARM\CMSIS\5.7.0\CMSIS\Core\Include -IC:\Programdata
+\Keil\Arm\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include --predefine="__EVAL SET
+A 1" --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 530" -
+-predefine="_RTE_ SETA 1" --predefine="STM32F10X_MD SETA 1" --predefine="_RTE_ 
+SETA 1" --list=gestionson.lst ..\PjtKEIL_StepSon\Src\GestionSon.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+mesdata 00000000
+
+Symbol: mesdata
+   Definitions
+      At line 7 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      None
+Comment: mesdata unused
+1 symbol
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+Index 00000002
+
+Symbol: Index
+   Definitions
+      At line 14 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 16 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+      At line 31 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+
+SortieSon 00000000
+
+Symbol: SortieSon
+   Definitions
+      At line 13 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 15 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+      At line 41 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+
+maram 00000000
+
+Symbol: maram
+   Definitions
+      At line 11 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      None
+Comment: maram unused
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+CallbackSon 00000000
+
+Symbol: CallbackSon
+   Definitions
+      At line 28 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 4 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+Comment: CallbackSon used once
+moncode 00000000
+
+Symbol: moncode
+   Definitions
+      At line 25 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      None
+Comment: moncode unused
+sortie 0000002C
+
+Symbol: sortie
+   Definitions
+      At line 45 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 36 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+Comment: sortie used once
+3 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+External symbols
+
+LongueurSon 00000000
+
+Symbol: LongueurSon
+   Definitions
+      At line 18 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 33 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+Comment: LongueurSon used once
+Son 00000000
+
+Symbol: Son
+   Definitions
+      At line 17 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+   Uses
+      At line 30 in file ..\PjtKEIL_StepSon\Src\GestionSon.s
+Comment: Son used once
+2 symbols
+346 symbols in table
