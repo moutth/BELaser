@@ -41,7 +41,7 @@ ForLoop
 	add r2, #1					;incrementation de l'index
 	cmp r2, #64					;comparaison du for
 	bne ForLoop
-	asr r7, #14					;on décale les digits pour éviter un débordement lors de la mise au carré
+	asr r7, #16					;on décale les digits pour éviter un débordement lors de la mise au carré
 	mul r7, r7					;mise au carré
 	cmp r10, #0
 	bne SommeFin

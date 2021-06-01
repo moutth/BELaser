@@ -9,14 +9,14 @@
 #define J3 20 //f=100kHz
 #define J4 23	//f=115kHz
 
-#define SEUIL_DETECT 0.01
+#define SEUIL_DETECT 0x01000000
 
 int DFT_ModuleAuCarre( short int * Signal64ech, char k);
 void CallbackSon(void);
 
 short int dma_buf[BUF_SIZE];
-int DFT[NB_JOUEURS];
 short int joueurs[NB_JOUEURS]= {J1, J2, J3, J4};
+int scores_temp[NB_JOUEURS]={0};
 int scores[NB_JOUEURS]={0};
 
 void callback_systick () {
@@ -24,11 +24,14 @@ void callback_systick () {
 	Wait_On_End_Of_DMA1();
 	Stop_DMA1;
 	for (int k=0; k<NB_JOUEURS; k++){
-		//DFT[k]=DFT_ModuleAuCarre(dma_buf, joueurs[k]);
-		if ((DFT[k]=DFT_ModuleAuCarre(dma_buf, joueurs[k])) > SEUIL_DETECT){
-			scores[k]++;
-			Active_IT_Debordement_Timer( TIM4, 2, CallbackSon );
+		//detection d'une touche du joueur k
+		if ((DFT_ModuleAuCarre(dma_buf, joueurs[k])) > SEUIL_DETECT){
+			scores_temp[k]++;
+			if (scores_temp[k] == 6)
+				scores[k]++;
 		}
+		else
+			scores_temp[k]=0;
 	}
 }
 
@@ -55,11 +58,10 @@ int main(void)
 	Init_ADC1_DMA1( 0, dma_buf );	
 	
 	//Parametrage de l'affichage
-	Init_Affichage();
+	//Init_Affichage();
 	
-	// configuration du Timer 4 en débordement 100ms
-	Timer_1234_Init_ff( TIM4, 1.0/0.000091);
-	Active_IT_Debordement_Timer( TIM4, 2, CallbackSon );
+	//Configuration du Timer 4 en débordement 100ms
+	//Timer_1234_Init_ff( TIM4, 1.0/0.000091);
 	
 	
 	//============================================================================	
